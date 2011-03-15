@@ -1,7 +1,7 @@
 package {
     import com.adobe.utils.AGALMiniAssembler;
 
-    import flash.display.MovieClip;
+    import flash.display.Sprite;
     import flash.display.Stage3D;
     import flash.display3D.Context3D;
     import flash.display3D.Context3DProgramType;
@@ -17,8 +17,7 @@ package {
     import flash.utils.ByteArray;
 
     [SWF(width="640", height="480", frameRate="60", backgroundColor="#000000")]
-    public class MolehillExample extends MovieClip {
-        private var context3D:Context3D = null;
+    public class MolehillExample extends Sprite {
         private var stage3D:Stage3D;
         private var program3D:Program3D;
         private var vertexBuffer:VertexBuffer3D;
@@ -37,11 +36,10 @@ package {
         }
 
         private function onContext3dCreate (e:Event):void {
-            context3D = stage3D.context3D;
-            context3D.enableErrorChecking = true;
+            var context3D:Context3D = stage3D.context3D;
             context3D.configureBackBuffer(640, 480, 1, false);
 
-            vertexBuffer = context3D.createVertexBuffer(3,6);
+            vertexBuffer = context3D.createVertexBuffer(3, 6);
             vertexBuffer.uploadFromVector(
                     Vector.<Number>([-1,-1,0,1,0,0,0,1,0,0.75,0.8,0.3,1,-1,0,0,0.5,0.9]),
                     0, 3);
@@ -52,7 +50,7 @@ package {
             var assembler:AGALMiniAssembler = new AGALMiniAssembler();
             assembler.assemble(Context3DProgramType.VERTEX,
                     "m44 op, va0, vc0\n" +
-                    "mov v0, va1\n");
+                            "mov v0, va1\n");
             var vertexCode:ByteArray = assembler.agalcode;
 
             assembler.assemble(Context3DProgramType.FRAGMENT,
@@ -64,11 +62,12 @@ package {
         }
 
         private function onEnterFrame (event:Event):void {
+            var context3D:Context3D = stage3D.context3D;
             if (context3D == null) {
                 return;
             }
 
-            context3D.clear(0,0,1,1);
+            context3D.clear(0, 0, 0, 1);
             context3D.setProgram(program3D);
 
             context3D.setVertexBufferAt(0, vertexBuffer, 0, Context3DVertexBufferFormat.FLOAT_3);
